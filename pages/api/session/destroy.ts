@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sessionOptions } from '../../../lib/session';
+import { sessionOptions } from '../../../common/session';
 
 function destorySessionRoute(req: NextApiRequest, res: NextApiResponse) {
   req.session.destroy();

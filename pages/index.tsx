@@ -4,48 +4,32 @@ import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import { useAccount, useAuth } from '@micro-stacks/react';
 import { GetServerSidePropsContext } from 'next/types';
-import { getIronSession } from '../lib/get-iron-session';
-
-interface SerializedAccount {
-  appPrivateKey: null | string;
-  address: string;
-  profile_url: string;
-}
-
-type AccountsTuple = [currentAccountIndex: number, accounts: SerializedAccount[]];
-
-type DehydratedState = [
-  network: [chainId: number, apiUrl: string],
-  accounts: AccountsTuple,
-  version: number
-];
-
-function cleanDehydratedState(dehydratedState?: string | null) {
-  if (!dehydratedState) return null;
-  const state = JSON.parse(dehydratedState) as DehydratedState;
-
-  return JSON.stringify([
-    state[0],
-    [state[1][0], state[1][1].map(account => ({ ...account, appPrivateKey: null }))],
-    state[2],
-  ]);
-}
+import { getDehydratedStateFromSession } from '../common/get-iron-session';
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const { dehydratedState } = await getIronSession(ctx.req, ctx.res);
-  console.log('getServerSideProps', dehydratedState);
-
   return {
     props: {
-      dehydratedState: cleanDehydratedState(dehydratedState ?? null),
+      dehydratedState: await getDehydratedStateFromSession(ctx),
     },
   };
 }
 
-const Home: NextPage = ({ dehydratedState }: any) => {
-  console.log(dehydratedState);
+const AuthComponent = () => {
   const { isSignedIn, openAuthRequest, signOut } = useAuth();
   const { stxAddress } = useAccount();
+  return (
+    <>
+      <p className={styles.description}>{isSignedIn ? stxAddress : 'no session'}</p>
+      <p className={styles.description}>
+        <button onClick={() => (isSignedIn ? signOut() : openAuthRequest())}>
+          {isSignedIn ? 'Sign out' : 'Authenticate'}
+        </button>
+      </p>
+    </>
+  );
+};
+
+const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
@@ -59,12 +43,7 @@ const Home: NextPage = ({ dehydratedState }: any) => {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
-        <p className={styles.description}>{isSignedIn ? stxAddress : 'no session'}</p>
-        <p className={styles.description}>
-          <button onClick={() => (isSignedIn ? signOut() : openAuthRequest())}>
-            {isSignedIn ? 'Sign out' : 'Authenticate'}
-          </button>
-        </p>
+        <AuthComponent />
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
