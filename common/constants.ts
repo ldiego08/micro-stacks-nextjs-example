@@ -3,7 +3,8 @@
 // assignment, as such, the CORS requests will fail, even tho they are the same deployment.
 // I've set this value to https://nextjs-example.micro-stacks.dev as it's where this demo will live
 // in your own apps you should do something similar
-const CUSTOM_APP_URL_ENV_VAR = process.env.NEXT_PUBLIC_APP_URL;
+const CUSTOM_APP_URL_ENV_VAR =
+  process.env.NODE_ENV === 'production' && 'https://nextjs-example.micro-stacks.dev';
 const VERCEL_URL = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
 
 export const APP_URL =
