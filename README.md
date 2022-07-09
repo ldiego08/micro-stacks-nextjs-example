@@ -1,10 +1,13 @@
 # micro-stacks + next.js
 
 This is an example Next.js application that implements `@micro-stacks/react` to add Stacks-based web3 authentication.
-The example also details how to share session state between client and server using [`iron-session`](https://github.com/vvo/iron-session.
+The example also details how to share session state between client and server
+using [`iron-session`](https://github.com/vvo/iron-session.
 
 This example is part of a guide found on
 micro-stacks.dev: [Building a Stacks app with Next.js](https://micro-stacks.dev/guides/with-nextjs)
+
+Online demo: [nextjs-example.micro-stacks.dev](https://nextjs-example.micro-stacks.dev)
 
 ## Overview
 
