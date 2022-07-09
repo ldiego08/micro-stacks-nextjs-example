@@ -1,25 +1,31 @@
 import '../styles/globals.css';
-import type { AppProps } from 'next/app';
-import { saveSession } from '../common/save-session';
-import { destroySession } from '../common/destroy-session';
 import { ClientProvider } from '@micro-stacks/react';
-import { ClientConfig } from '@micro-stacks/client';
 import { useCallback } from 'react';
+import { destroySession, saveSession } from '../common/fetchers';
+
+import type { AppProps } from 'next/app';
+import type { ClientConfig } from '@micro-stacks/client';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const config: ClientConfig = {
-    appName: 'Nextjs + Microstacks',
-    appIconUrl: '/',
-    onPersistState: useCallback(async (dehydratedState: string) => {
+  const onPersistState: ClientConfig['onPersistState'] = useCallback(
+    async (dehydratedState: string) => {
       await saveSession(dehydratedState);
-    }, []),
-    onSignOut: useCallback(async () => {
-      await destroySession();
-    }, []),
-  };
+    },
+    []
+  );
+
+  const onSignOut: ClientConfig['onSignOut'] = useCallback(async () => {
+    await destroySession();
+  }, []);
 
   return (
-    <ClientProvider {...config} dehydratedState={pageProps.dehydratedState}>
+    <ClientProvider
+      appName="Nextjs + Microstacks"
+      appIconUrl="/vercel.png"
+      dehydratedState={pageProps?.dehydratedState}
+      onPersistState={onPersistState}
+      onSignOut={onSignOut}
+    >
       <Component {...pageProps} />
     </ClientProvider>
   );
