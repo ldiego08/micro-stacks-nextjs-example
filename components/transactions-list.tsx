@@ -1,4 +1,5 @@
 import { useTransactions } from "../hooks/use-transactions";
+import type { TransactionStatus, MempoolTransactionStatus } from '@stacks/stacks-blockchain-api-types';
 
 export const TransactionsList = () => {
     const { transactions, isLoading, hasError } = useTransactions();
@@ -16,19 +17,32 @@ export const TransactionsList = () => {
             <table>
                 <thead>
                     <tr>
-                        <th>Tx ID</th>
+                        <th>Transaction</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {transactions.map((tx, i) => (
-                        <tr key={i}>
-                            <td>{tx.id}</td>
-                            <td>Confirmed</td>
+                    {transactions.map((transaction, index) => (
+                        <tr key={index}>
+                            <td>{transaction.id}</td>
+                            <td>{getTransactionStatusDisplayName(transaction.status)}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
         </div>
     );
+}
+
+const getTransactionStatusDisplayName = (status: TransactionStatus | MempoolTransactionStatus) => {
+    switch (status) {
+        case 'success':
+            return 'Success';
+        
+        case 'pending':
+            return 'Pending';
+
+        default:
+            return 'Other';
+    }
 }
